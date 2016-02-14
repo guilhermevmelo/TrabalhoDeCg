@@ -45,3 +45,23 @@ double Sphere::findIntersection(Ray ray) {
         return -1;
     }
 }
+
+void Sphere::translate(double tx, double ty, double tz) {
+    center.translate(tx, ty, tz);
+}
+
+void Sphere::scale(double sx, double sy, double sz) {
+    radius *= sx;
+}
+
+void Sphere::rotateX(double angle) {
+    center.rotateX(angle);
+}
+
+void Sphere::rotateY(double angle) {
+    center.rotateY(angle);
+}
+
+void Sphere::rotateZ(double angle) {
+    center.rotateZ(angle);
+}

@@ -12,6 +12,11 @@ public:
     virtual Color getColor() { return Color(0, 0, 0, 0); }
     virtual double findIntersection(Ray ray) { return 0; }
 
+    virtual void translate(double tx, double ty, double tz) {}
+    virtual void scale(double sx, double sy, double sz){}
+    virtual void rotateX(double angle){}
+    virtual void rotateY(double angle){}
+    virtual void rotateZ(double angle){}
 };
 
 #endif // OBJECT_H

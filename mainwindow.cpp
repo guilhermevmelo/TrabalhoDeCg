@@ -39,7 +39,7 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
 
       double min = numeric_limits<double>::max();
       double index = -1;
-      for (int j = 0; j < intersections.size(); j++) {
+      for (unsigned int j = 0; j < intersections.size(); j++) {
           if (intersections.at(j) > 0 && intersections.at(j) < min) {
               min = intersections.at(j);
               index = j;
@@ -58,9 +58,6 @@ MainWindow::MainWindow(QWidget *parent) :
     int H = 480;
     double aspectRatio = (double)W/(double)H;
 
-    QImage image = QImage(W, H, QImage::Format_RGB32);
-    QGraphicsScene * graphic = new QGraphicsScene(this);
-
     //std::cout << "About to enter main loop" << std::endl;
 
     Vector O(0, 0, 0);
@@ -68,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Y(0, 1, 0);
     Vector Z(0, 0, 1);
 
-    Vector camera_position(3, 1.5, -    4);
+    Vector camera_position(3, 1.5, -4);
     Vector look_at(0, 0, 0);
     Vector diff_btw (camera_position.x() - look_at.x(),
                      camera_position.y() - look_at.y(),
@@ -76,7 +73,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Vector camera_direction = diff_btw.negative().normalize();
     Vector camera_right = Y.crossProduct(camera_direction).normalize();
-    Vector camera_down = camera_right.crossProduct(camera_direction);
+    Vector camera_down = camera_right.crossProduct(camera_direction).negative();
+
+    camera_down = Vector(camera_down.x(), camera_down.y(), camera_down.z());
 
     Camera camera(camera_position, camera_direction, camera_right, camera_down);
 
@@ -104,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent) :
     objects.push_back(dynamic_cast<Object *>(&little_ball));
     objects.push_back(dynamic_cast<Object *>(&moon));
 
+    QImage image = QImage(W, H, QImage::Format_RGB32);
+    QGraphicsScene * graphic = new QGraphicsScene(this);
+
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 
@@ -130,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
             Ray camera_ray(camera_ray_origin, camera_ray_direction);
 
             vector<double> intersections;
-            for (long index = 0; index < objects.size(); index++) {
+            for (unsigned int index = 0; index < objects.size(); index++) {
                 intersections.push_back(objects.at(index)->findIntersection(camera_ray));
             }
 

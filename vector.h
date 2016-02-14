@@ -20,6 +20,12 @@ public:
     Vector crossProduct(Vector v);
     Vector add(Vector v);
     Vector multiply(double scalar);
+
+    void translate(double tx, double ty, double tz);
+    void scale(double sx, double sy, double sz);
+    void rotateX(double angle);
+    void rotateY(double angle);
+    void rotateZ(double angle);
 };
 
 #endif // VECTOR_H
