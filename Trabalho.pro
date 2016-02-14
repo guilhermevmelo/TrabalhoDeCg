@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     light.cpp \
     sphere.cpp \
     object.cpp \
-    plane.cpp
+    plane.cpp \
+    triangle.cpp \
+    cube.cpp
 
 HEADERS  += mainwindow.h \
     vector.h \
@@ -31,6 +33,8 @@ HEADERS  += mainwindow.h \
     light.h \
     sphere.h \
     object.h \
-    plane.h
+    plane.h \
+    triangle.h \
+    cube.h
 
 FORMS    += mainwindow.ui
