@@ -35,10 +35,10 @@ Vector Vector::add(Vector v) {
     return Vector(_x + v.x(), _y + v.y(), _z+v.z());
 }
 
-
 Vector Vector::multiply(double scalar) {
     return Vector(_x * scalar, _y * scalar, _z * scalar);
 }
+
 
 ostream & operator<<(ostream & out, Vector &vetor) {
     out <<"[" << vetor.x();
@@ -46,4 +46,40 @@ ostream & operator<<(ostream & out, Vector &vetor) {
     out << ", " << vetor.z();
     out << "]";
     return out;
+}
+
+void Vector::translate(double tx, double ty, double tz) {
+    _x += tx;
+    _y += ty;
+    _z += tz;
+}
+
+void Vector::scale(double sx, double sy, double sz) {
+    _x *= sx;
+    _y *= sy;
+    _z *= sz;
+}
+
+void Vector::rotateX(double angle) {
+    double newY = _y*cos(angle) - _z*sin(angle);
+    double newZ = _y*sin(angle) + _z*cos(angle);
+
+    _y = newY;
+    _z = newZ;
+}
+
+void Vector::rotateY(double angle) {
+    double newX = _x*cos(angle) + _z*sin(angle);
+    double newZ = (-_x)*sin(angle) + _z*cos(angle);
+
+    _x = newX;
+    _z = newZ;
+}
+
+void Vector::rotateZ(double angle) {
+    double newX = _x*cos(angle) - _y*sin(angle);
+    double newY = _x*sin(angle) + _y*cos(angle);
+
+    _x = newX;
+    _y = newY;
 }

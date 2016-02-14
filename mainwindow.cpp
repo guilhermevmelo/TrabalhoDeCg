@@ -39,7 +39,7 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
 
       double min = numeric_limits<double>::max();
       double index = -1;
-      for (int j = 0; j < intersections.size(); j++) {
+      for (unsigned int j = 0; j < intersections.size(); j++) {
           if (intersections.at(j) > 0 && intersections.at(j) < min) {
               min = intersections.at(j);
               index = j;
@@ -71,8 +71,10 @@ MainWindow::MainWindow(QWidget *parent) :
     double ambientLight = 0.2;
     double accuracy = 0.000001;
 
-    QImage image = QImage(W, H, QImage::Format_RGB16);
+
+    QImage image = QImage(W, H, QImage::Format_RGB32);
     QGraphicsScene * graphic = new QGraphicsScene(this);
+
 
     //std::cout << "About to enter main loop" << std::endl;
 
@@ -82,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     Vector camera_position(3, 1.5, -4);
+
 
     //cout << camera_position << endl;
 
@@ -93,6 +96,8 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector camera_direction = diff_btw.negative().normalize();
     Vector camera_right = Y.crossProduct(camera_direction).normalize();
     Vector camera_down = camera_right.crossProduct(camera_direction).negative();
+
+    //camera_down = Vector(camera_down.x(), camera_down.y(), camera_down.z());
 
     Camera camera(camera_position, camera_direction, camera_right, camera_down);
 
@@ -150,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent) :
             Ray camera_ray(camera_ray_origin, camera_ray_direction);
 
             vector<double> intersections;
-            for (long index = 0; index < objects.size(); index++) {
+            for (unsigned int index = 0; index < objects.size(); index++) {
                 intersections.push_back(objects.at(index)->findIntersection(camera_ray));
             }
 
@@ -163,9 +168,9 @@ MainWindow::MainWindow(QWidget *parent) :
             else {
                 Vector intersectionPoint = camera_ray_origin.add(camera_ray_direction.multiply(intersections.at(index_of_closest_object)));
                 // obter a cor do objeto:
-                //c = objects.at(index_of_closest_object)->getColor();
+                c = objects.at(index_of_closest_object)->getColor();
                 // obter a cor da interaçao com o cenario
-                c = getColorAt(intersectionPoint, camera_ray_direction, objects, index_of_closest_object, light_sources, accuracy, ambientLight);
+                //c = getColorAt(intersectionPoint, camera_ray_direction, objects, index_of_closest_object, light_sources, accuracy, ambientLight);
             }
 
             QRgb qtRGB = qRgb(c.r()*255, c.g()*255, c.b()*255);

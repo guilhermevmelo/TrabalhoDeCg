@@ -20,4 +20,25 @@ double Plane::findIntersection(Ray ray) {
     }
     double b = normal.dotProduct(ray.origin().add(normal.multiply(distance).negative()));
     return -1*b/a;
+
+}
+
+void Plane::translate(double tx, double ty, double tz) {
+
+}
+
+void Plane::scale(double sx, double sy, double sz) {
+
+}
+
+void Plane::rotateX(double angle) {
+
+}
+
+void Plane::rotateY(double angle) {
+
+}
+
+void Plane::rotateZ(double angle) {
+
 }
