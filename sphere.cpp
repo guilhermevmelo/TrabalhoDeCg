@@ -10,9 +10,7 @@ Sphere::Sphere(Vector center, double radius, Color color):center(center), radius
 
 Vector Sphere::getNormalAt(Vector p) {
     // A normal sempre aponta pra longe do centro da esfera
-
-    Vector normal_at_point = p.add(center.negative()).normalize();
-    return normal_at_point;
+    return  p.add(center.negative()).normalize();
 }
 
 double Sphere::findIntersection(Ray ray) {

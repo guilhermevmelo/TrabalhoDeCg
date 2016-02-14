@@ -19,7 +19,7 @@ public:
     double rad() { return radius; }
     virtual Color getColor() { return color; }
 
-    Vector getNormalAt(Vector p);
+    virtual Vector getNormalAt(Vector p);
     virtual double findIntersection(Ray ray);
 };
 

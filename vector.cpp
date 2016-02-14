@@ -39,3 +39,11 @@ Vector Vector::add(Vector v) {
 Vector Vector::multiply(double scalar) {
     return Vector(_x * scalar, _y * scalar, _z * scalar);
 }
+
+ostream & operator<<(ostream & out, Vector &vetor) {
+    out <<"[" << vetor.x();
+    out << ", " << vetor.y();
+    out << ", " << vetor.z();
+    out << "]";
+    return out;
+}

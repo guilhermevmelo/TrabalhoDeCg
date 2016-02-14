@@ -2,6 +2,9 @@
 #define VECTOR_H
 
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 class Vector {
     double _x, _y, _z;
@@ -21,5 +24,8 @@ public:
     Vector add(Vector v);
     Vector multiply(double scalar);
 };
+
+//Usar para debugar
+std::ostream& operator<<(std::ostream& out, Vector &vector);
 
 #endif // VECTOR_H

@@ -19,7 +19,7 @@ public:
     double getDistance() { return distance; }
     virtual Color getColor() { return color; }
 
-    Vector getNormalAt(Vector p) { return normal; }
+    virtual Vector getNormalAt(Vector p) { return normal; }
     virtual double findIntersection(Ray ray);
 };
 

@@ -49,6 +49,17 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
       return index;
 }
 
+Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<Object *> objects, long index_of_closest_object, vector<Light *> light_sources, double accuracy, double ambientLight) {
+    /*for (int light_i = 0; light_i < light_sources.size(); light_i++) {
+        Vector light_direction = light_sources.at(light_i)->pos().add(intersectionPoint.negative()).normalize();
+        Object *closest_object = objects.at(index_of_closest_object);
+        Vector closest_object_normal = closest_object->getNormalAt(intersectionPoint);
+        float cossine = closest_object_normal.dotProduct(light_direction);
+    }*/
+
+    return Color(0, 0, 0, 0);
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
@@ -57,8 +68,10 @@ MainWindow::MainWindow(QWidget *parent) :
     int W = 640;
     int H = 480;
     double aspectRatio = (double)W/(double)H;
+    double ambientLight = 0.2;
+    double accuracy = 0.000001;
 
-    QImage image = QImage(W, H, QImage::Format_RGB32);
+    QImage image = QImage(W, H, QImage::Format_RGB16);
     QGraphicsScene * graphic = new QGraphicsScene(this);
 
     //std::cout << "About to enter main loop" << std::endl;
@@ -68,7 +81,10 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Y(0, 1, 0);
     Vector Z(0, 0, 1);
 
-    Vector camera_position(3, 1.5, -    4);
+    Vector camera_position(3, 1.5, -4);
+
+    //cout << camera_position << endl;
+
     Vector look_at(0, 0, 0);
     Vector diff_btw (camera_position.x() - look_at.x(),
                      camera_position.y() - look_at.y(),
@@ -76,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Vector camera_direction = diff_btw.negative().normalize();
     Vector camera_right = Y.crossProduct(camera_direction).normalize();
-    Vector camera_down = camera_right.crossProduct(camera_direction);
+    Vector camera_down = camera_right.crossProduct(camera_direction).negative();
 
     Camera camera(camera_position, camera_direction, camera_right, camera_down);
 
@@ -88,8 +104,12 @@ MainWindow::MainWindow(QWidget *parent) :
     Color red(1, 0.5, 0.5, 0.3);
 
     Vector light_position(-7, 10, -10);
-    Light light_source(light_position, white);
+    Light light1(light_position, white);
+    Light light2(Vector(10, -7, 10), red);
 
+    vector<Light *> light_sources;
+    light_sources.push_back(dynamic_cast<Light *>(&light1));
+    light_sources.push_back(dynamic_cast<Light *>(&light2));
 
     // Instancia os bjetos abaixo
     Sphere ball(O, 1, green);
@@ -140,8 +160,13 @@ MainWindow::MainWindow(QWidget *parent) :
             Color c;
             if (index_of_closest_object < 0)
                 c = black;
-            else
-                c = objects.at(index_of_closest_object)->getColor();
+            else {
+                Vector intersectionPoint = camera_ray_origin.add(camera_ray_direction.multiply(intersections.at(index_of_closest_object)));
+                // obter a cor do objeto:
+                //c = objects.at(index_of_closest_object)->getColor();
+                // obter a cor da interaçao com o cenario
+                c = getColorAt(intersectionPoint, camera_ray_direction, objects, index_of_closest_object, light_sources, accuracy, ambientLight);
+            }
 
             QRgb qtRGB = qRgb(c.r()*255, c.g()*255, c.b()*255);
             image.setPixel(i, j, qtRGB);

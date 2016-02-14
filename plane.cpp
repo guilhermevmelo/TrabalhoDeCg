@@ -20,6 +20,4 @@ double Plane::findIntersection(Ray ray) {
     }
     double b = normal.dotProduct(ray.origin().add(normal.multiply(distance).negative()));
     return -1*b/a;
-
-
 }

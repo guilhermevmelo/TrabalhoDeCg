@@ -11,7 +11,7 @@ public:
 
     virtual Color getColor() { return Color(0, 0, 0, 0); }
     virtual double findIntersection(Ray ray) { return 0; }
-
+    virtual Vector getNormalAt(Vector p) { return p;}
 };
 
 #endif // OBJECT_H
