@@ -284,7 +284,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     //Vector camera_position(3, 1.5, -4);
-    Vector camera_position(-10, 5, 0);
+    Vector camera_position(-6, 2, 0);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -308,19 +308,22 @@ MainWindow::MainWindow(QWidget *parent) :
     Color black(0, 0, 0, 0);
     Color red(1, 0.5, 0.5, 0.3);
     Color orange(0.94, 0.75, 0.31, 0);
+    Color blue(0.3, 0.4, 0.8, 0.4);
 
-    Light light1(Vector(-10, 0, 0), white);
+    Light light1(Vector(-10, 2, 0), white);
     Light light2(Vector(0, 10, 0), white);
 
     vector<Light *> light_sources;
     light_sources.push_back(dynamic_cast<Light *>(&light1));
-    //light_sources.push_back(dynamic_cast<Light *>(&light2));
+    light_sources.push_back(dynamic_cast<Light *>(&light2));
 
-    // Instancia os bjetos abaixo
+    // Instancia os bejetos abaixo
     Sphere ball(O, 1, green);
     Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
-    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
-    Plane ground(Y, -1, brown);
+    Sphere moon(O, 0.2, Color(0.8, 0.8, 0.8, 0.5));
+    moon.translate(-5, 3, 0);
+    moon.scale(0.1, 1, 1);
+    Plane ground(Y, -1, gray);
     Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
     Cube cube(Vector(0,0,0), Vector(0.5,0.5,0.5), orange);
@@ -331,8 +334,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     objects.push_back(dynamic_cast<Object *>(&ball));
     objects.push_back(dynamic_cast<Object *>(&ground));
-//    objects.push_back(dynamic_cast<Object *>(&little_ball));
-//    objects.push_back(dynamic_cast<Object *>(&moon));
+    objects.push_back(dynamic_cast<Object *>(&little_ball));
+    objects.push_back(dynamic_cast<Object *>(&moon));
 //    objects.push_back(dynamic_cast<Object *>(&triangle));
 
     double xamnt, yamnt;
