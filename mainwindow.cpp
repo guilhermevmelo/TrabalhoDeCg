@@ -56,7 +56,7 @@ vector<Object*> loadObject(const char* filename) {
                         int a,b,c;
 
                         sscanf(coord[i]->c_str(),"f %d %d %d",&a,&b,&c);
-                                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), Color(0.5,0.5,0.5,0)));     //read in, and add to the end of the face list
+                                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), Color(0.5,0.5,0.5,0.3)));     //read in, and add to the end of the face list
                 }
         }
         return faces;
@@ -113,21 +113,27 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
             float dtl_mag = distance_to_light.magnitude();
 
 
-//            Ray shadow_ray(intersectionPoint, distance_to_light.normalize());
+            Ray shadow_ray(intersectionPoint, distance_to_light.normalize());
 
-//            vector<double> intersections;
+            vector<double> intersections;
 
-//            for (int i = 0; i < objects.size(); i++) {
-//                intersections.push_back(objects.at(i)->findIntersection(shadow_ray));
-//            }
+            for (int i = 0; i < objects.size(); i++) {
+                intersections.push_back(objects.at(i)->findIntersection(shadow_ray));
+            }
 
-//            for (int c = 0; c < intersections.size(); c++) {
-//                if (intersections.at(c) > accuracy && intersections.at(c) <= dtl_mag) {
-//                    //cout << " BREAK" << endl;
-//                    shadowed = true;
-//                    break;
-//                }
-//            }
+//            double t = getIndexOfClosestObject(intersections);
+//            if (t > accuracy && t <= dtl_mag)
+//                shadowed = true;
+
+            for (int c = 0; c < intersections.size(); c++) {
+                if (intersections.at(c) > accuracy) {
+                    if(intersections.at(c) <= dtl_mag) {
+                        //cout << " BREAK" << endl;
+                        shadowed = true;
+                    }
+                    break;
+                }
+            }
 
             if (shadowed == false) {
                 //cout << "FALSE" << endl;
@@ -304,7 +310,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int H = 480;
     double aspectRatio = (double)W/(double)H;
     double ambientLight = 0.2;
-    double accuracy = 0.00000001;
+    double accuracy = 0.0000000001;
 
 
     QImage image = QImage(W, H, QImage::Format_RGB32);
@@ -319,7 +325,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     //Vector camera_position(3, 1.5, -4);
-    Vector camera_position(3, 1.5, -4);
+    Vector camera_position(-10, 5, 0);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -344,12 +350,11 @@ MainWindow::MainWindow(QWidget *parent) :
     Color red(1, 0.5, 0.5, 0.3);
     Color orange(0.94, 0.75, 0.31, 0);
 
-    Vector light_position(-7, 10, -10);
-    Light light1(light_position, white);
-    Light light2(Vector(0, 10, 0), white);
+    Light light1(Vector(-10, 0, 0), white);
+    Light light2(Vector(0, 100, 0), white);
 
     vector<Light *> light_sources;
-    //light_sources.push_back(dynamic_cast<Light *>(&light1));
+    light_sources.push_back(dynamic_cast<Light *>(&light1));
     light_sources.push_back(dynamic_cast<Light *>(&light2));
 
     // Instancia os bjetos abaixo
@@ -363,7 +368,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //    cube.translate(-1,1,1);
 //    addCube(cube);
 
-//    // Cria a lista de objetos
 
 //    objects.push_back(dynamic_cast<Object *>(&ball));
 //    objects.push_back(dynamic_cast<Object *>(&ground));
@@ -376,7 +380,6 @@ MainWindow::MainWindow(QWidget *parent) :
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 
-    #pragma omp parallel for
     for (int j = 0; j < H; j++) {
         for (int i = 0; i < W; i++) {
 

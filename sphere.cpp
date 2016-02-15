@@ -26,7 +26,7 @@ double Sphere::findIntersection(Ray ray) {
     if (delta > 0) {
         // intersecta nos dois lados
         //x'
-        double x_1 = ((-b) - sqrt(delta))/2 - 0.000001;
+        double x_1 = ((-b) - sqrt(delta))/2;
 
         if (x_1 > 0) {
             // x' é a menor raiz positiva
@@ -34,8 +34,8 @@ double Sphere::findIntersection(Ray ray) {
         }
 
         //x''
-        //double x_2 = ((-b) + sqrt(delta))/2 - 0.000001;
-        double x_2 = sqrt(delta)/2 - 0.000001;
+        double x_2 = ((-b) + sqrt(delta))/2;
+        //double x_2 = sqrt(delta)/2;// - 0.000001;
 
         return x_2;
     } else {
