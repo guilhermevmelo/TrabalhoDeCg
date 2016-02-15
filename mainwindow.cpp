@@ -25,11 +25,13 @@ using namespace std;
 /* Globals */
 vector<Object *> objects;
 const bool render_shadows = true;
+double bottomY = numeric_limits<double>::max();
 
 vector<Object*> loadObject(const char* filename, Color color) {
         vector<string*> coord;        //read every single line of the obj file as a string
         vector<Vector> vertex;
         vector<Object*> faces;
+
 
         ifstream in(filename);     //open the .obj file
         if(!in.is_open())       //if not opened, exit with -1
@@ -55,6 +57,8 @@ vector<Object*> loadObject(const char* filename, Color color) {
                         float tmpx,tmpy,tmpz;
                         sscanf(coord[i]->c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);       //read in the 3 float coordinate to tmpx,tmpy,tmpz
                         vertex.push_back(Vector(tmpx,tmpy,tmpz));       //and then add it to the end of our vertex list
+                        if (tmpy < bottomY)
+                            bottomY = tmpy;
                 }else if(coord[i]->c_str()[0]=='f')     //if face
                 {
                         int a,b,c;
@@ -63,6 +67,7 @@ vector<Object*> loadObject(const char* filename, Color color) {
                                 faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), color));     //read in, and add to the end of the face list
                 }
         }
+        cout << bottomY << endl;
         return faces;
 }
 
@@ -152,9 +157,9 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
                     Vector add1 = scalar1.add(camera_ray_direction);
                     Vector scalar2 = add1.multiply(2);
                     Vector add2 = camera_ray_direction.negative().add(scalar2);
-                    Vector reflection_direction = add2.normalize();
+                    Vector r = add2.normalize();
 
-                    double specular = reflection_direction.dotProduct(l);
+                    double specular = r.dotProduct(l);
 
                     //cout << specular << endl;
 
@@ -185,8 +190,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    int W = 100;
-    int H = 100;
+    int W = 200;
+    int H = 200;
     double aspectRatio = (double)W/(double)H;
     double ambientLight = 0.2;
     double accuracy = 0.0000000001;
@@ -203,8 +208,8 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Y(0, 1, 0);
     Vector Z(0, 0, 1);
 
-    //Vector camera_position(3, 1.5, -4);
-    Vector camera_position(5, 5, 5);
+    //Vector camera_position(0, 0, 5);
+    Vector camera_position(3, 2, 3);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -224,14 +229,14 @@ MainWindow::MainWindow(QWidget *parent) :
     Color white(1.0, 1.0, 1.0, 0);
     Color green(0.5, 1.0, 0.5, 0.3);
     Color brown(0.5, 0.2, 0.25, 0);
-    Color gray(0.5, 0.5, 0.5, 0);
+    Color gray(0.5, 0.5, 0.5, 0.3);
     Color black(0, 0, 0, 0);
     Color red(1, 0.5, 0.5, 0.3);
     Color orange(0.94, 0.75, 0.31, 0);
     Color blue(0.3, 0.4, 0.8, 0.4);
 
 
-    Light light1(Vector(-10, 0, 0), white);
+    Light light1(Vector(0, 0, 10), white);
     Light light2(Vector(0, 100, 0), white);
 
     vector<Light *> light_sources;
@@ -243,7 +248,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Sphere ball(O, 1, green);
 //    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
 //    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
-    Plane ground(Y, -1, brown);
+    Plane ground(Y, bottomY, green);
 //    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
 //    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
@@ -259,7 +264,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    objects.push_back(dynamic_cast<Object *>(&triangle));
 
 
-    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso_0_06.obj", orange);
+    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso2_0_07.obj", gray);
     objects.push_back(dynamic_cast<Object *>(&ground));
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
@@ -295,7 +300,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 c = black;
             else {
                 Vector intersectionPoint = camera_ray_origin.add(camera_ray_direction.multiply(intersections.at(index_of_closest_object)));
-                // obter a cor do objeto:
+                // obter a cor pura do objeto sem interacao com o cenario:
                 //c = objects.at(index_of_closest_object)->getColor();
                 // obter a cor da interaçao com o cenario
                 c = getColorAt(intersectionPoint, camera_ray_direction, objects, index_of_closest_object, light_sources, accuracy, ambientLight);
@@ -304,7 +309,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
             QRgb qtRGB = qRgb(c.r()*255, c.g()*255, c.b()*255);
             image.setPixel(i, j, qtRGB);
-        }
+         }
     }
 
     graphic->addPixmap(QPixmap::fromImage(image));
