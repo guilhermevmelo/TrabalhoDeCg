@@ -17,6 +17,8 @@
 #include "object.h"
 #include "sphere.h"
 #include "plane.h"
+#include "triangle.h"
+#include "cube.h"
 
 using namespace std;
 
@@ -122,6 +124,7 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
 
     return color.clip();
 }
+
 
 //Color getColorAt(Vector intersection_position, Vector intersecting_ray_direction, vector<Object*> scene_objects, long index_of_winning_object, vector<Light*> light_sources, double accuracy, double ambientlight) {
 
@@ -242,6 +245,15 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
 //    return final_color.clip();
 //}
 
+vector<Object *> objects;
+
+void addCube(Cube cube) {
+
+    for(unsigned int i = 0; i < cube.getFaces().size(); i++) {
+        objects.push_back(cube.getFaces().at(i));
+    }
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
@@ -265,9 +277,8 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Y(0, 1, 0);
     Vector Z(0, 0, 1);
 
+    //Vector camera_position(3, 1.5, -4);
     Vector camera_position(3, 1.5, -4);
-
-
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -290,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Color gray(0.5, 0.5, 0.5, 0);
     Color black(0, 0, 0, 0);
     Color red(1, 0.5, 0.5, 0.3);
+    Color orange(0.94, 0.75, 0.31, 0);
 
     Vector light_position(-7, 10, -10);
     Light light1(light_position, white);
@@ -304,23 +316,25 @@ MainWindow::MainWindow(QWidget *parent) :
     Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
     Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
     Plane ground(Y, -1, brown);
+    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
+
+    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
+    cube.translate(-1,1,1);
+    addCube(cube);
 
     // Cria a lista de objetos
-    vector<Object *> objects;
+
     objects.push_back(dynamic_cast<Object *>(&ball));
     objects.push_back(dynamic_cast<Object *>(&ground));
-    objects.push_back(dynamic_cast<Object *>(&little_ball));
-    objects.push_back(dynamic_cast<Object *>(&moon));
+//    objects.push_back(dynamic_cast<Object *>(&little_ball));
+//    objects.push_back(dynamic_cast<Object *>(&moon));
+//    objects.push_back(dynamic_cast<Object *>(&triangle));
 
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 
     for (int j = 0; j < H; j++) {
         for (int i = 0; i < W; i++) {
-//            double r = 1;
-//            double g = 0.3;
-//            double b = 0.2;
-//            QRgb qtRGB = qRgb(r * 255, g * 255, b * 255);
 
             if (W > H) {
                 xamnt = ((i + 0.5)/W)*aspectRatio - ((W - H)/(double)H)/2;
