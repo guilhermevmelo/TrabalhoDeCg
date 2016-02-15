@@ -19,57 +19,13 @@
 #include "plane.h"
 #include "triangle.h"
 #include "cube.h"
+#include "congresso.h"
 
 using namespace std;
 
 /* Globals */
 vector<Object *> objects;
 const bool render_shadows = true;
-double bottomY = numeric_limits<double>::max();
-
-vector<Object*> loadObject(const char* filename, Color color) {
-        vector<string*> coord;        //read every single line of the obj file as a string
-        vector<Vector> vertex;
-        vector<Object*> faces;
-
-
-        ifstream in(filename);     //open the .obj file
-        if(!in.is_open())       //if not opened, exit with -1
-        {
-                cout << "Nor oepened" << endl;
-                return faces;
-        }
-
-        char buf[256];
-        //read in every line to coord
-        while(!in.eof())
-        {
-                in.getline(buf,256);
-                coord.push_back(new string(buf));
-        }
-        //go through all of the elements of coord, and decide what kind of element is that
-        for(int i=0;i<coord.size();i++)
-        {
-                if(coord[i]->c_str()[0]=='#')   //if it is a comment (the first character is #)
-                        continue;       //we don't care about that
-                else if(coord[i]->c_str()[0]=='v' && coord[i]->c_str()[1]==' ') //if vector
-                {
-                        float tmpx,tmpy,tmpz;
-                        sscanf(coord[i]->c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);       //read in the 3 float coordinate to tmpx,tmpy,tmpz
-                        vertex.push_back(Vector(tmpx,tmpy,tmpz));       //and then add it to the end of our vertex list
-                        if (tmpy < bottomY)
-                            bottomY = tmpy;
-                }else if(coord[i]->c_str()[0]=='f')     //if face
-                {
-                        int a,b,c;
-
-                        sscanf(coord[i]->c_str(),"f %d %d %d",&c,&b,&a);
-                                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), color));     //read in, and add to the end of the face list
-                }
-        }
-        cout << bottomY << endl;
-        return faces;
-}
 
 long  getIndexOfClosestObject(vector<double>  intersections) {
     // para se nao toca em nada
@@ -82,22 +38,16 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
        return -1;
     }
 
-//    double max = 0;
-//    for (int i = 0; i < intersections.size(); i++) {
-//        if (max < intersections.at(i))
-//            max = intersections.at(i);
-//    }
-
-      double min = numeric_limits<double>::max();
-      double index = -1;
-      for (unsigned int j = 0; j < intersections.size(); j++) {
-          if (intersections.at(j) > 0 && intersections.at(j) < min) {
-              min = intersections.at(j);
-              index = j;
-          }
+    double min = numeric_limits<double>::max();
+    double index = -1;
+    for (unsigned int j = 0; j < intersections.size(); j++) {
+      if (intersections.at(j) > 0 && intersections.at(j) < min) {
+          min = intersections.at(j);
+          index = j;
       }
+    }
 
-      return index;
+    return index;
 }
 
 Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<Object *> objects, long index_of_closest_object, vector<Light *> light_sources, double accuracy, double ambientLight) {
@@ -108,7 +58,7 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
 
     Color color = closest_object_color.scale(ambientLight);
 
-    for (int light_i = 0; light_i < light_sources.size(); light_i++) {
+    for (unsigned int light_i = 0; light_i < light_sources.size(); light_i++) {
         Vector l = light_sources.at(light_i)->pos().add(intersectionPoint.negative()).normalize();
         float cossine = n.dotProduct(l);
         //cout << "cos = " << cossine << endl;
@@ -126,11 +76,11 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
 
                 vector<double> intersections;
 
-                for (int i = 0; i < objects.size(); i++) {
+                for (unsigned int i = 0; i < objects.size(); i++) {
                     intersections.push_back(objects.at(i)->findIntersection(shadow_ray));
                 }
 
-                for (int c = 0; c < intersections.size(); c++) {
+                for (unsigned int c = 0; c < intersections.size(); c++) {
                     if (intersections.at(c) > accuracy) {
                         if(intersections.at(c) <= dtl_mag) {
                             //cout << " BREAK" << endl;
@@ -178,10 +128,9 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
     return color.clip();
 }
 
-void addCube(Cube cube) {
-
-    for(unsigned int i = 0; i < cube.getFaces().size(); i++) {
-        objects.push_back(cube.getFaces().at(i));
+void addFaces(vector<Object *> faces) {
+    for(unsigned int i = 0; i < faces.size(); i++) {
+        objects.push_back(faces.at(i));
     }
 }
 
@@ -190,8 +139,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    int W = 100;
-    int H = 100;
+    int W = 400;
+    int H = 400;
     double aspectRatio = (double)W/(double)H;
     double ambientLight = 0.2;
     double accuracy = 0.0000000001;
@@ -199,7 +148,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QImage image = QImage(W, H, QImage::Format_RGB32);
     QGraphicsScene * graphic = new QGraphicsScene(this);
-
 
     //cout << "About to enter main loop" << endl;
 
@@ -209,7 +157,9 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     //Vector camera_position(0, 0, 5);
-    Vector camera_position(1, 1, 1);
+    //Vector camera_position(1, 0.5, 1);
+    //Vector camera_position(1, 0.5, -1);
+    Vector camera_position(1, 0, 0);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -245,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Instancia os bjetos abaixo
-//    Sphere ball(O, 1, green);
+    Sphere ball(O, 1, green);
 //    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
 //    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
 
@@ -253,7 +203,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
 //    cube.translate(-1,1,1);
-//    addCube(cube);
+//    addFaces(cube.getFaces());
 
 
 
@@ -263,10 +213,17 @@ MainWindow::MainWindow(QWidget *parent) :
 //    objects.push_back(dynamic_cast<Object *>(&moon));
 //    objects.push_back(dynamic_cast<Object *>(&triangle));
 
+    Congresso congresso;
 
-    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso2.obj", gray);
-    Plane ground(Y, bottomY, green);
+    addFaces(congresso.getFaces());
+
+    Plane ground(Y, congresso.getBottomY(), green);
     objects.push_back(dynamic_cast<Object *>(&ground));
+
+    Plane sky(Z, -100, blue);
+    objects.push_back(dynamic_cast<Object *>(&sky));
+
+
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 
