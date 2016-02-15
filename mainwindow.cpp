@@ -190,8 +190,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    int W = 200;
-    int H = 200;
+    int W = 100;
+    int H = 100;
     double aspectRatio = (double)W/(double)H;
     double ambientLight = 0.2;
     double accuracy = 0.0000000001;
@@ -209,7 +209,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     //Vector camera_position(0, 0, 5);
-    Vector camera_position(3, 2, 3);
+    Vector camera_position(1, 1, 1);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -237,7 +237,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     Light light1(Vector(0, 0, 10), white);
-    Light light2(Vector(0, 100, 0), white);
+    Light light2(Vector(0, 10, 0), white);
 
     vector<Light *> light_sources;
     light_sources.push_back(dynamic_cast<Light *>(&light1));
@@ -248,7 +248,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Sphere ball(O, 1, green);
 //    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
 //    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
-    Plane ground(Y, bottomY, green);
+
 //    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
 //    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
@@ -264,7 +264,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    objects.push_back(dynamic_cast<Object *>(&triangle));
 
 
-    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso2_0_07.obj", gray);
+    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso2.obj", gray);
+    Plane ground(Y, bottomY, green);
     objects.push_back(dynamic_cast<Object *>(&ground));
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
