@@ -204,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Vector Z(0, 0, 1);
 
     //Vector camera_position(3, 1.5, -4);
-    Vector camera_position(10, 10, 10);
+    Vector camera_position(5, 5, 5);
     //cout << camera_position << endl;
 
     Vector look_at(0, 0, 0);
@@ -259,7 +259,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    objects.push_back(dynamic_cast<Object *>(&triangle));
 
 
-    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso_0_1.obj", orange);
+    objects = loadObject("/Users/guilherme/Developer/Trabalho/congresso_0_06.obj", orange);
     objects.push_back(dynamic_cast<Object *>(&ground));
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
