@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
-
+#include <fstream>
 #include "vector.h"
 #include "ray.h"
 #include "camera.h"
@@ -21,6 +21,47 @@
 #include "cube.h"
 
 using namespace std;
+
+vector<Object*> loadObject(const char* filename) {
+        vector<string*> coord;        //read every single line of the obj file as a string
+        vector<Vector> vertex;
+        vector<Object*> faces;
+
+        ifstream in(filename);     //open the .obj file
+        if(!in.is_open())       //if not opened, exit with -1
+        {
+                cout << "Nor oepened" << endl;
+                return faces;
+        }
+
+        char buf[256];
+        //read in every line to coord
+        while(!in.eof())
+        {
+                in.getline(buf,256);
+                coord.push_back(new string(buf));
+        }
+        //go through all of the elements of coord, and decide what kind of element is that
+        for(int i=0;i<coord.size();i++)
+        {
+                if(coord[i]->c_str()[0]=='#')   //if it is a comment (the first character is #)
+                        continue;       //we don't care about that
+                else if(coord[i]->c_str()[0]=='v' && coord[i]->c_str()[1]==' ') //if vector
+                {
+                        float tmpx,tmpy,tmpz;
+                        sscanf(coord[i]->c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);       //read in the 3 float coordinate to tmpx,tmpy,tmpz
+                        vertex.push_back(Vector(tmpx,tmpy,tmpz));       //and then add it to the end of our vertex list
+                }else if(coord[i]->c_str()[0]=='f')     //if face
+                {
+                        int a,b,c;
+
+                        sscanf(coord[i]->c_str(),"f %d %d %d",&a,&b,&c);
+                                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), Color(0.5,0.5,0.5,0.3)));     //read in, and add to the end of the face list
+                }
+        }
+        return faces;
+}
+
 
 long  getIndexOfClosestObject(vector<double>  intersections) {
     // para se nao toca em nada
@@ -276,7 +317,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QGraphicsScene * graphic = new QGraphicsScene(this);
 
 
-    //std::cout << "About to enter main loop" << std::endl;
+    //cout << "About to enter main loop" << endl;
 
     Vector O(0, 0, 0);
     Vector X(1, 0, 0);
@@ -310,34 +351,36 @@ MainWindow::MainWindow(QWidget *parent) :
     Color orange(0.94, 0.75, 0.31, 0);
     Color blue(0.3, 0.4, 0.8, 0.4);
 
-    Light light1(Vector(-10, 2, 0), white);
-    Light light2(Vector(0, 10, 0), white);
+
+    Light light1(Vector(-10, 0, 0), white);
+    Light light2(Vector(0, 100, 0), white);
 
     vector<Light *> light_sources;
     light_sources.push_back(dynamic_cast<Light *>(&light1));
     light_sources.push_back(dynamic_cast<Light *>(&light2));
 
-    // Instancia os bejetos abaixo
-    Sphere ball(O, 1, green);
-    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
-    Sphere moon(O, 0.2, Color(0.8, 0.8, 0.8, 0.5));
-    moon.translate(-5, 3, 0);
-    moon.scale(0.1, 1, 1);
-    Plane ground(Y, -1, gray);
-    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
-    Cube cube(Vector(0,0,0), Vector(0.5,0.5,0.5), orange);
-    cube.translate(-1,1,1);
-    addCube(cube);
+    // Instancia os bjetos abaixo
+//    Sphere ball(O, 1, green);
+//    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
+//    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
+//    Plane ground(Y, -1, brown);
+//    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
-    // Cria a lista de objetos
+//    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
+//    cube.translate(-1,1,1);
+//    addCube(cube);
 
-    objects.push_back(dynamic_cast<Object *>(&ball));
-    objects.push_back(dynamic_cast<Object *>(&ground));
-    objects.push_back(dynamic_cast<Object *>(&little_ball));
-    objects.push_back(dynamic_cast<Object *>(&moon));
-//    objects.push_back(dynamic_cast<Object *>(&triangle));
 
+
+//    objects.push_back(dynamic_cast<Object *>(&ball));
+//    objects.push_back(dynamic_cast<Object *>(&ground));
+////    objects.push_back(dynamic_cast<Object *>(&little_ball));
+////    objects.push_back(dynamic_cast<Object *>(&moon));
+////    objects.push_back(dynamic_cast<Object *>(&triangle));
+
+
+    objects = loadObject("chico.obj");
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 
