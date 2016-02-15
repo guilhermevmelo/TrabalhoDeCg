@@ -2,11 +2,11 @@
 #define SPHERE_H
 
 #include <cmath>
-#include "object.h"
+#include "primitive.h"
 #include "vector.h"
 #include "color.h"
 
-class Sphere : public Object {
+class Sphere : public Primitive {
     Vector center;
     double radius;
     Color color;

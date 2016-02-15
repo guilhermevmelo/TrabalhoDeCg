@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     triangle.cpp \
     cube.cpp \
     congresso.cpp \
-    objreader.cpp
+    objreader.cpp \
+    primitive.cpp \
+    torus.cpp
 
 HEADERS  += mainwindow.h \
     vector.h \
@@ -39,6 +41,8 @@ HEADERS  += mainwindow.h \
     triangle.h \
     cube.h \
     congresso.h \
-    objreader.h
+    objreader.h \
+    primitive.h \
+    torus.h
 
 FORMS    += mainwindow.ui

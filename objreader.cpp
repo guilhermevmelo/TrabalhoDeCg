@@ -2,6 +2,7 @@
 #include "objreader.h"
 #include "vector.h"
 #include "triangle.h"
+#include <limits>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ double ObjReader::getBottomY() {
     return bottomY;
 }
 
-vector<Object *> ObjReader::getFaces() {
+vector<Primitive *> ObjReader::getFaces() {
     return faces;
 }
 

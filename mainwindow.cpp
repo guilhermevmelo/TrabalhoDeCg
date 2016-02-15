@@ -9,6 +9,8 @@
 #include <cstdio>
 #include <ctime>
 #include <fstream>
+
+#include "primitive.h"
 #include "vector.h"
 #include "ray.h"
 #include "camera.h"
@@ -20,11 +22,12 @@
 #include "triangle.h"
 #include "cube.h"
 #include "congresso.h"
+#include "torus.h"
 
 using namespace std;
 
 /* Globals */
-vector<Object *> objects;
+vector<Primitive *> objects;
 const bool render_shadows = true;
 
 long  getIndexOfClosestObject(vector<double>  intersections) {
@@ -50,9 +53,9 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
     return index;
 }
 
-Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<Object *> objects, long index_of_closest_object, vector<Light *> light_sources, double accuracy, double ambientLight) {
+Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<Primitive *> objects, long index_of_closest_object, vector<Light *> light_sources, double accuracy, double ambientLight) {
 
-    Object *closest_object = objects.at(index_of_closest_object);
+    Primitive *closest_object = objects.at(index_of_closest_object);
     Vector n = closest_object->getNormalAt(intersectionPoint);
     Color closest_object_color = closest_object->getColor();
 
@@ -128,9 +131,14 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
     return color.clip();
 }
 
-void addFaces(vector<Object *> faces) {
+void addPrimitive(Primitive * primitive) {
+    objects.push_back(primitive);
+}
+
+void addObject(Object object) {
+    vector<Primitive *> faces = object.getFaces();
     for(unsigned int i = 0; i < faces.size(); i++) {
-        objects.push_back(faces.at(i));
+        addPrimitive(faces.at(i));
     }
 }
 
@@ -139,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    int W = 400;
+    int W = 600;
     int H = 400;
     double aspectRatio = (double)W/(double)H;
     double ambientLight = 0.2;
@@ -159,8 +167,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //Vector camera_position(0, 0, 5);
     //Vector camera_position(1, 0.5, 1);
     //Vector camera_position(1, 0.5, -1);
-    Vector camera_position(1, 0, 0);
-    //cout << camera_position << endl;
+    //Vector camera_position(1, 0, 0);
+    Vector camera_position(6, 2, 0);
 
     Vector look_at(0, 0, 0);
     Vector diff_btw (camera_position.x() - look_at.x(),
@@ -193,9 +201,8 @@ MainWindow::MainWindow(QWidget *parent) :
     light_sources.push_back(dynamic_cast<Light *>(&light1));
     light_sources.push_back(dynamic_cast<Light *>(&light2));
 
-
     // Instancia os bjetos abaixo
-    Sphere ball(O, 1, green);
+//    Sphere ball(O, 1, green);
 //    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
 //    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
 
@@ -203,25 +210,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
 //    cube.translate(-1,1,1);
-//    addFaces(cube.getFaces());
+//    addObject(cube);
 
 
+//    objects.push_back(dynamic_cast<Primitive *>(&ball));
 
-//    objects.push_back(dynamic_cast<Object *>(&ball));
+//    objects.push_back(dynamic_cast<Primitive *>(&little_ball));
+//    objects.push_back(dynamic_cast<Primitive *>(&moon));
+//    objects.push_back(dynamic_cast<Primitive *>(&triangle));
 
-//    objects.push_back(dynamic_cast<Object *>(&little_ball));
-//    objects.push_back(dynamic_cast<Object *>(&moon));
-//    objects.push_back(dynamic_cast<Object *>(&triangle));
+//    Congresso congresso;
+//    addObject(congresso);
 
-    Congresso congresso;
+    Torus torus;
+    addObject(torus);
 
-    addFaces(congresso.getFaces());
+//    Plane ground(Y, congresso.getBottomY(), green);
+//    objects.push_back(dynamic_cast<Primitive *>(&ground));
 
-    Plane ground(Y, congresso.getBottomY(), green);
-    objects.push_back(dynamic_cast<Object *>(&ground));
-
-    Plane sky(Z, -100, blue);
-    objects.push_back(dynamic_cast<Object *>(&sky));
+//    Plane sky(Z, -100, blue);
+//    objects.push_back(dynamic_cast<Primitive *>(&sky));
 
 
     double xamnt, yamnt;

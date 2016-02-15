@@ -2,18 +2,18 @@
 #define OBJREADER_H
 
 #include<vector>
-#include<cmath>
 #include "object.h"
+#include "primitive.h"
 
 class ObjReader {
     double bottomY;
-    vector<Object*> faces;
+    vector<Primitive *> faces;
 
     public:
         ObjReader();
         int read(const char* filename, Color color);
         double getBottomY();
-        vector<Object *> getFaces();
+        vector<Primitive *> getFaces();
 };
 
 #endif // OBJREADER_H

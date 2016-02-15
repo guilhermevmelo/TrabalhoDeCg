@@ -2,22 +2,32 @@
 #define OBJECT_H
 
 #include <cmath>
+#include <vector>
 #include "color.h"
 #include "ray.h"
+#include "primitive.h"
+
+using namespace std;
 
 class Object {
-public:
-    Object();
 
-    virtual Color getColor() { return Color(0, 0, 0, 0); }
-    virtual double findIntersection(Ray ray) { return 0; }
-    virtual Vector getNormalAt(Vector p) { return p;}
+    protected:
+        Color color;
+        vector<Primitive*> faces;
+        double bottomY;
 
-    virtual void translate(double tx, double ty, double tz) {}
-    virtual void scale(double sx, double sy, double sz){}
-    virtual void rotateX(double angle){}
-    virtual void rotateY(double angle){}
-    virtual void rotateZ(double angle){}
+    public:
+        Object();
+
+        vector<Primitive *> getFaces();
+        double getBottomY();
+        Color getColor();
+
+        void translate(double tx, double ty, double tz);
+        void scale(double sx, double sy, double sz);
+        void rotateX(double angle);
+        void rotateY(double angle);
+        void rotateZ(double angle);
 };
 
 #endif // OBJECT_H

@@ -2,11 +2,11 @@
 #define TRIANGLE_H
 
 #include <cmath>
-#include "object.h"
+#include "primitive.h"
 #include "vector.h"
 #include "color.h"
 
-class Triangle : public Object {
+class Triangle : public Primitive {
     Vector _a, _b, _c, _n;
     Color _color;
 

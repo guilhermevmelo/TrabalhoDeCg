@@ -2,11 +2,11 @@
 #define PLANE_H
 
 #include <cmath>
-#include "object.h"
+#include "primitive.h"
 #include "vector.h"
 #include "color.h"
 
-class Plane : public Object {
+class Plane : public Primitive {
     Vector normal;
     double distance;
     Color color;
