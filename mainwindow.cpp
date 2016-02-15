@@ -112,7 +112,6 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
             Vector distance_to_light = light_sources.at(light_i)->pos().add(intersectionPoint.negative());
             float dtl_mag = distance_to_light.magnitude();
 
-
             Ray shadow_ray(intersectionPoint, distance_to_light.normalize());
 
             vector<double> intersections;
@@ -120,10 +119,6 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
             for (int i = 0; i < objects.size(); i++) {
                 intersections.push_back(objects.at(i)->findIntersection(shadow_ray));
             }
-
-//            double t = getIndexOfClosestObject(intersections);
-//            if (t > accuracy && t <= dtl_mag)
-//                shadowed = true;
 
             for (int c = 0; c < intersections.size(); c++) {
                 if (intersections.at(c) > accuracy) {
@@ -158,7 +153,7 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
                     //cout << specular << endl;
 
                     if (specular > 0) {
-                        specular = pow(specular, 10);
+                        specular = pow(specular, closest_object_color.s() * 10);
                         Color light_color = light_sources.at(light_i)->col();
                         color = color.add(light_color.scale(specular * closest_object_color.s()));
 
@@ -171,126 +166,6 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, vector<O
 
     return color.clip();
 }
-
-
-//Color getColorAt(Vector intersection_position, Vector intersecting_ray_direction, vector<Object*> scene_objects, long index_of_winning_object, vector<Light*> light_sources, double accuracy, double ambientlight) {
-
-//    Color winning_object_color = scene_objects.at(index_of_winning_object)->getColor();
-//    Vector winning_object_normal = scene_objects.at(index_of_winning_object)->getNormalAt(intersection_position);
-
-////    if (winning_object_color.s() == 2) {
-////        // checkered/tile floor pattern
-
-////        int square = (int)floor(intersection_position.getVectX()) + (int)floor(intersection_position.getVectZ());
-
-////        if ((square % 2) == 0) {
-////            // black tile
-////            winning_object_color.setColorRed(0);
-////            winning_object_color.setColorGreen(0);
-////            winning_object_color.setColorBlue(0);
-////        }
-////        else {
-////            // white tile
-////            winning_object_color.setColorRed(1);
-////            winning_object_color.setColorGreen(1);
-////            winning_object_color.setColorRed(1);
-////        }
-////    }
-
-//    Color final_color = winning_object_color.scale(ambientlight);
-
-////    if (winning_object_color.s() > 0 && winning_object_color.s() <= 1) {
-////        // reflection from objects with specular intensity
-////        double dot1 = winning_object_normal.dotProduct(intersecting_ray_direction.negative());
-////        Vector scalar1 = winning_object_normal.multiply(dot1);
-////        Vector add1 = scalar1.add(intersecting_ray_direction);
-////        Vector scalar2 = add1.multiply(2);
-////        Vector add2 = intersecting_ray_direction.negative().add(scalar2);
-////        Vector reflection_direction = add2.normalize();
-
-////        Ray reflection_ray (intersection_position, reflection_direction);
-
-////        // determine what the ray intersects with first
-////        vector<double> reflection_intersections;
-
-////        for (int reflection_index = 0; reflection_index < scene_objects.size(); reflection_index++) {
-////            reflection_intersections.push_back(scene_objects.at(reflection_index)->findIntersection(reflection_ray));
-////        }
-
-////        int index_of_winning_object_with_reflection = getIndexOfClosestObject(reflection_intersections);
-
-////        if (index_of_winning_object_with_reflection != -1) {
-////            // reflection ray missed everthing else
-////            if (reflection_intersections.at(index_of_winning_object_with_reflection) > accuracy) {
-////                // determine the position and direction at the point of intersection with the reflection ray
-////                // the ray only affects the color if it reflected off something
-
-////                Vector reflection_intersection_position = intersection_position.add(reflection_direction.multiply(reflection_intersections.at(index_of_winning_object_with_reflection)));
-////                Vector reflection_intersection_ray_direction = reflection_direction;
-
-////                Color reflection_intersection_color = getColorAt(reflection_intersection_position, reflection_intersection_ray_direction, scene_objects, index_of_winning_object_with_reflection, light_sources, accuracy, ambientlight);
-
-////                final_color = final_color.add(reflection_intersection_color.scale(winning_object_color.s()));
-////            }
-////        }
-////    }
-
-//    for (int light_index = 0; light_index < light_sources.size(); light_index++) {
-//        Vector light_direction = light_sources.at(light_index)->pos().add(intersection_position.negative()).normalize();
-
-//        float cosine_angle = winning_object_normal.dotProduct(light_direction);
-
-//        if (cosine_angle > 0) {
-//            // test for shadows
-//            bool shadowed = false;
-
-//            Vector distance_to_light = light_sources.at(light_index)->pos().add(intersection_position.negative());
-//            float distance_to_light_magnitude = distance_to_light.magnitude();
-
-//            Ray shadow_ray (intersection_position, light_sources.at(light_index)->pos().add(intersection_position.negative()).normalize());
-
-//            vector<double> secondary_intersections;
-
-//            for (int object_index = 0; object_index < scene_objects.size() && shadowed == false; object_index++) {
-//                secondary_intersections.push_back(scene_objects.at(object_index)->findIntersection(shadow_ray));
-//            }
-
-//            for (int c = 0; c < secondary_intersections.size(); c++) {
-//                if (secondary_intersections.at(c) > accuracy) {
-//                    if (secondary_intersections.at(c) <= distance_to_light_magnitude) {
-//                        shadowed = true;
-
-//                    }
-//break;
-//                }
-//            }
-
-//            if (shadowed == false) {
-//                final_color = final_color.add(winning_object_color.multiply(light_sources.at(light_index)->col()).scale(cosine_angle));
-
-//                if (winning_object_color.s() > 0 && winning_object_color.s() <= 1) {
-//                    // special [0-1]
-//                    double dot1 = winning_object_normal.dotProduct(intersecting_ray_direction.negative());
-//                    Vector scalar1 = winning_object_normal.multiply(dot1);
-//                    Vector add1 = scalar1.add(intersecting_ray_direction);
-//                    Vector scalar2 = add1.multiply(2);
-//                    Vector add2 = intersecting_ray_direction.negative().add(scalar2);
-//                    Vector reflection_direction = add2.normalize();
-
-//                    double specular = reflection_direction.dotProduct(light_direction);
-//                    if (specular > 0) {
-//                        specular = pow(specular, 10);
-//                        final_color = final_color.add(light_sources.at(light_index)->col().scale(specular*winning_object_color.s()));
-//                    }
-//                }
-
-//            }
-
-//        }
-//    }
-
-//    return final_color.clip();
-//}
 
 vector<Object *> objects;
 
@@ -357,30 +232,30 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vector<Light *> light_sources;
     light_sources.push_back(dynamic_cast<Light *>(&light1));
-    light_sources.push_back(dynamic_cast<Light *>(&light2));
+    //light_sources.push_back(dynamic_cast<Light *>(&light2));
 
 
     // Instancia os bjetos abaixo
-//    Sphere ball(O, 1, green);
-//    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
-//    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
-//    Plane ground(Y, -1, brown);
-//    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
+    Sphere ball(O, 1, green);
+    Sphere little_ball(O.add(Vector(1.2, -0.7, 0)), 0.3, red);
+    Sphere moon(O.add(Vector(2, 2, 2)), 0.2, Color(0.8, 0.8, 0.8, 0.5));
+    Plane ground(Y, -1, brown);
+    Triangle triangle(Vector(3,0,0), Vector(0,3,0), Vector(0,0,3), orange);
 
-//    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
-//    cube.translate(-1,1,1);
-//    addCube(cube);
-
-
-
-//    objects.push_back(dynamic_cast<Object *>(&ball));
-//    objects.push_back(dynamic_cast<Object *>(&ground));
-////    objects.push_back(dynamic_cast<Object *>(&little_ball));
-////    objects.push_back(dynamic_cast<Object *>(&moon));
-////    objects.push_back(dynamic_cast<Object *>(&triangle));
+    Cube cube(Vector(1,1,1), Vector(-1,-1,-1), orange);
+    cube.translate(-1,1,1);
+    addCube(cube);
 
 
-    objects = loadObject("chico.obj");
+
+    objects.push_back(dynamic_cast<Object *>(&ball));
+    objects.push_back(dynamic_cast<Object *>(&ground));
+//    objects.push_back(dynamic_cast<Object *>(&little_ball));
+//    objects.push_back(dynamic_cast<Object *>(&moon));
+//    objects.push_back(dynamic_cast<Object *>(&triangle));
+
+
+//    objects = loadObject("/Users/guilherme/Developer/Trabalho/chico.obj");
     double xamnt, yamnt;
     Vector camera_ray_origin = camera.getCameraPosition();
 

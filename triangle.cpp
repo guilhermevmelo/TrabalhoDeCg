@@ -5,19 +5,29 @@ Triangle::Triangle() {
     _b = Vector(0,1,0);
     _c = Vector(0,0,1);
     _color = Color(0.5,0.5,0.5,0);
-}
-
-Triangle::Triangle(Vector a, Vector b, Vector c, Color color):_a(a), _b(b), _c(c), _color(color) { }
-
-Vector Triangle::getNormal() {
     Vector ca(_c.x() - _a.x(), _c.y() - _a.y(), _c.z() - _a.z());
     Vector ba(_b.x() - _a.x(), _b.y() - _a.y(), _b.z() - _a.z());
-    return ca.crossProduct(ba).normalize();
+    _n = ca.crossProduct(ba).normalize();
+}
+
+Triangle::Triangle(Vector a, Vector b, Vector c, Color color):_a(a), _b(b), _c(c), _color(color) {
+    Vector ca(_c.x() - _a.x(), _c.y() - _a.y(), _c.z() - _a.z());
+    Vector ba(_b.x() - _a.x(), _b.y() - _a.y(), _b.z() - _a.z());
+    _n = ca.crossProduct(ba).normalize();
+}
+
+Triangle::Triangle(Vector a, Vector b, Vector c, Color color, Vector normal):_a(a), _b(b), _c(c), _color(color), _n(normal) { }
+
+Vector Triangle::getNormalAt(Vector p) {
+    return _n;
+}
+
+Vector Triangle::getNormal() {
+    return _n;
 }
 
 double Triangle::getDistance() {
-    Vector normal = getNormal();
-    return normal.dotProduct(_a);
+    return _n.dotProduct(_a);
 }
 
 Color Triangle::getColor() {

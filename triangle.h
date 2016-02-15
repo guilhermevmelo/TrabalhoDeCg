@@ -7,16 +7,18 @@
 #include "color.h"
 
 class Triangle : public Object {
-    Vector _a, _b, _c;
+    Vector _a, _b, _c, _n;
     Color _color;
 
 public:
     Triangle();
     Triangle(Vector, Vector, Vector, Color);
+    Triangle(Vector, Vector, Vector, Color, Vector);
 
     Vector getNormal();
     double getDistance();
 
+    virtual Vector getNormalAt(Vector p);
     virtual Color getColor();
     virtual double findIntersection(Ray ray);
 
