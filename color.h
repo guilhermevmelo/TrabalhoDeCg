@@ -1,6 +1,10 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include <iostream>
+
+using namespace std;
+
 class Color {
     double red, green, blue, special; // Special é a reflectividade e o polimento
 public:
@@ -19,6 +23,12 @@ public:
     Color scale(double);
     Color add(Color c);
     Color multiply(Color c);
+    Color average(Color color);
+    Color clip();
 };
+
+
+//Usar para debugar
+std::ostream& operator<<(std::ostream& out, Color &color);
 
 #endif // COLOR_H

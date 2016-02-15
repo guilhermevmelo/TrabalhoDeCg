@@ -6,4 +6,3 @@ Light::Light() {
 }
 
 Light::Light(Vector p, Color c):position(p), color(c){}
-
