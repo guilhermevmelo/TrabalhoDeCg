@@ -29,12 +29,12 @@ using namespace std;
 vector<Primitive *> objects;
 vector<Light *> light_sources;
 
-const bool render_shadows = true;
+const bool render_shadows = false;
 double ambientLight = 0.2;
 double accuracy = 0.0000000001;
 
-int W = 100;
-int H = 100;
+int W = 600;
+int H = 400;
 
 Color white(1.0, 1.0, 1.0, 0);
 Color green(0.5, 1.0, 0.5, 0.3);
@@ -42,7 +42,7 @@ Color brown(0.5, 0.2, 0.25, 0);
 Color gray(0.5, 0.5, 0.5, 0.3);
 Color black(0, 0, 0, 0);
 Color red(1, 0.5, 0.5, 0.3);
-Color orange(0.94, 0.75, 0.31, 0);
+Color orange(0.94, 0.75, 0.31, 0.3);
 Color blue(0.3, 0.4, 0.8, 0.4);
 
 
@@ -160,29 +160,34 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Cenário final
 
-//    Congresso congresso;
-//    addObject(congresso);
+    //Congresso congresso;
+    //addObject(congresso);
 
-//    Plane ground(Vector(0,1,0), congresso.getBottomY(), green);
-//    objects.push_back(dynamic_cast<Primitive *>(&ground));
+    Plane ground(Vector(0,1,0), -3, brown);
+    objects.push_back(dynamic_cast<Primitive *>(&ground));
 
 //    Plane sky(Vector(0, 0, 1), -100, blue);
 //    objects.push_back(dynamic_cast<Primitive *>(&sky));
 
+    Cube cube(Vector(-5, -2, -5), Vector(-4, 0,-4), orange);
+    addObject(cube);
+
+    Sphere little_ball(Vector(0, 0, 0), 2, green);
+    objects.push_back(dynamic_cast<Primitive *>(&little_ball));
 
 //    Torus
 
-    Torus torus;
-    addObject(torus);
+//    Torus torus;
+//    addObject(torus);
 
     double aspectRatio = (double)W / (double)H;
 
-    //Vector camera_position(0, 0, 5);
-    //Vector camera_position(1, 0.5, 1); //Camera do Congresso
-    //Vector camera_position(1, 0.5, -1);
-    //Vector camera_position(1, 0, 0);
+//    Vector camera_position(0, 0, 5);
+//    Vector camera_position(1, 0.5, 1); //Camera do Congresso
+//    Vector camera_position(1, 0.5, -1);
+    Vector camera_position(0, 6, 10);
 
-    Vector camera_position(-6, 2, 0); //Camera do Torus
+//    Vector camera_position(-6, 4, 3); //Camera do Torus
     Vector look_at(0, 0, 0);
     Vector up(0, 1, 0);
 
