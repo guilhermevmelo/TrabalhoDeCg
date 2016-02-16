@@ -4,8 +4,8 @@
 Torus::Torus() {
     ObjReader reader;
 
-    color = Color(0.94, 0.75, 0.31, 0);
-    reader.read("torus.obj", color);
+    material = Material();
+    reader.read("/Users/guilherme/Developer/Trabalho/chico.obj", material);
 
     faces = reader.getFaces();
     bottomY = reader.getBottomY();

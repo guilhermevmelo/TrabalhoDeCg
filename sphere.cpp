@@ -3,10 +3,10 @@
 Sphere::Sphere() {
     center = Vector(0, 0, 0);
     radius = 1.0;
-    color = Color(0.5, 0.5, 0.5, 0);
+    material = Material();
 }
 
-Sphere::Sphere(Vector center, double radius, Color color):center(center), radius(radius), color(color) {}
+Sphere::Sphere(Vector center, double radius, Material color):center(center), radius(radius), color(color) {}
 
 Vector Sphere::getNormalAt(Vector p) {
     // A normal sempre aponta pra longe do centro da esfera

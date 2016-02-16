@@ -4,19 +4,22 @@ Triangle::Triangle() {
     _a = Vector(1,0,0);
     _b = Vector(0,1,0);
     _c = Vector(0,0,1);
-    _color = Color(0.5,0.5,0.5,0);
+    material = Material();
     Vector ca(_c.x() - _a.x(), _c.y() - _a.y(), _c.z() - _a.z());
     Vector ba(_b.x() - _a.x(), _b.y() - _a.y(), _b.z() - _a.z());
     _n = ca.crossProduct(ba).normalize();
 }
 
-Triangle::Triangle(Vector a, Vector b, Vector c, Color color):_a(a), _b(b), _c(c), _color(color) {
+Triangle::Triangle(Vector a, Vector b, Vector c, Material material):_a(c), _b(b), _c(a) {
+    this->material = material;
     Vector ca(_c.x() - _a.x(), _c.y() - _a.y(), _c.z() - _a.z());
     Vector ba(_b.x() - _a.x(), _b.y() - _a.y(), _b.z() - _a.z());
     _n = ca.crossProduct(ba).normalize();
 }
 
-Triangle::Triangle(Vector a, Vector b, Vector c, Color color, Vector normal):_a(a), _b(b), _c(c), _color(color), _n(normal) { }
+Triangle::Triangle(Vector a, Vector b, Vector c, Material material, Vector normal):_a(c), _b(b), _c(a), _n(normal) {
+    this->material = material;
+}
 
 Vector Triangle::getNormalAt(Vector p) {
     return _n;
@@ -28,10 +31,6 @@ Vector Triangle::getNormal() {
 
 double Triangle::getDistance() {
     return _n.dotProduct(_a);
-}
-
-Color Triangle::getColor() {
-    return _color;
 }
 
 double Triangle::findIntersection(Ray ray) {

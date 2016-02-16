@@ -13,6 +13,7 @@
 #include "vector.h"
 #include "ray.h"
 #include "camera.h"
+#include "material.h"
 #include "color.h"
 #include "light.h"
 #include "object.h"
@@ -33,17 +34,18 @@ const bool render_shadows = true;
 double ambientLight = 0.2;
 double accuracy = 0.0000000001;
 
-int W = 600;
-int H = 400;
+int W = 200;
+int H = 200;
 
-Color white(1.0, 1.0, 1.0, 0);
-Color green(0.5, 1.0, 0.5, 0.3);
-Color brown(0.5, 0.2, 0.25, 0);
-Color gray(0.5, 0.5, 0.5, 0.3);
-Color black(0, 0, 0, 0);
-Color red(1, 0.5, 0.5, 0.3);
-Color orange(0.94, 0.75, 0.31, 0.3);
-Color blue(0.3, 0.4, 0.8, 0.4);
+Color white(1.0, 1.0, 1.0);
+Color black(0, 0, 0);
+
+Material green(Color(0.2, 0.2, 0.2), Color(0.5, 1.0, 0.5), Color(0.5, 1.0, 0.5), 2);
+Material brown(Color(0.2, 0.2, 0.2), Color(0.4, 0.2, 0.25), Color(0.1, 0.1, 0.1), 0);
+Material metal(Color(0.2, 0.2, 0.2), Color(0.1, 0.1, 0.1), Color(1, 1, 1), 5);
+Material red(Color(0.2, 0.2, 0.2), Color(1,0,0), Color(1, 0, 0), 2);
+Material orange(Color(0.1, 0.1, 0.1), Color(0.0752, 0.6, 0.0248), Color(0.7, 0.5585, 0.2308), 2);
+Material blue(Color(0.2, 0.2, 0.2), Color(0.3, 0.4, 0.8), Color(0.3, 0.4, 0.8), 2);
 
 Vector X(1, 0, 0);
 Vector Y(0, 1, 0);
@@ -78,15 +80,19 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long ind
 
     Primitive *closest_object = objects.at(index_of_closest_object);
     Vector n = closest_object->getNormalAt(intersectionPoint);
-    Color object_color = closest_object->getColor();
+    Material object_material = closest_object->getMaterial();
 
-    // Componente ambiente
-    Color color = object_color.scale(ambientLight);
-
+    Color color(0, 0, 0);
+    //color = color.scale(ambientLight);
     for (unsigned int light_i = 0; light_i < light_sources.size(); light_i++) {
-        Color light_color = light_sources.at(light_i)->col();
+        Color light_color_a = light_sources.at(light_i)->col_a();
+        Color light_color_d = light_sources.at(light_i)->col_d();
+        Color light_color_s = light_sources.at(light_i)->col_s();
         Vector l = light_sources.at(light_i)->pos().add(intersectionPoint.negative()).normalize();
         float cossine = n.dotProduct(l);
+
+        // Componente ambiente
+        color = color.add(light_color_a.multiply(object_material.ka()));
 
         if (cossine > 0) {
             // testar as sombras
@@ -117,7 +123,7 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long ind
 
             if (shadowed == false) {
                 // Componente Difusa
-                color = color.add(object_color.multiply(light_color.scale(cossine)));
+                color = color.add(light_color_d.multiply(object_material.kd()).scale(cossine));
 
                 //Componente especular
                 Vector v = camera_ray_direction.negative();
@@ -127,10 +133,9 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long ind
 
                 double specular = r.dotProduct(v);
 
-                if (specular > 0) {
-                    specular = pow(specular, object_color.s() * 10);
-                    color = color.add(light_color.scale(specular * object_color.s()));
-                }
+                //if (specular > 0) {
+                    color = color.add(light_color_s.multiply(object_material.ks()).scale(pow(specular, object_material.m())));
+                //}
             }
         }
     }
@@ -160,24 +165,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Cenário final
 
-    //Congresso congresso;
-    //addObject(congresso);
+    Congresso congresso;
+    addObject(congresso);
 
-    Plane ground(Vector(0,1,0), -3, brown);
+    Plane ground(Vector(0,1,0), congresso.getBottomY(), brown);
     objects.push_back(dynamic_cast<Primitive *>(&ground));
 
 //    Plane sky(Vector(0, 0, 1), -100, blue);
 //    objects.push_back(dynamic_cast<Primitive *>(&sky));
 
-    Triangle t(X, Y, Z, blue);
-    objects.push_back(dynamic_cast<Primitive *>(&t));
+//    Triangle t(X, Y, Z, red);
+//    objects.push_back(dynamic_cast<Primitive *>(&t));
 
 
-    Cube cube(Vector(-3, -2, -3), Vector(-2, -1,-2), orange);
+//    Cube cube(Vector(-3, -2, -3), Vector(-2, -1,-2), metal);
     //cube.translate();
-    addObject(cube);
+//    addObject(cube);
 
-    Sphere little_ball(Vector(0, 0, 0), 1, orange);
+//    Sphere little_ball(Vector(0, 0, 0), 1, orange);
     //objects.push_back(dynamic_cast<Primitive *>(&little_ball));
 
 //    Torus
@@ -190,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Vector camera_position(0, 0, 5);
 //    Vector camera_position(1, 0.5, 1); //Camera do Congresso
 //    Vector camera_position(1, 0.5, -1);
-    Vector camera_position(5, 5, 5);
+    Vector camera_position(0, 3, 3);
 
 //    Vector camera_position(-6, 4, 3); //Camera do Torus
     Vector look_at(0, 0, 0);
@@ -198,10 +203,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Camera camera(camera_position, look_at, up);
 
-    Light light1(Vector(0, 0, 10), white);
-    Light light2(Vector(0, 10, 0), white);
+    Light light1(Vector(0, 0, 10), Color(0.2, 0.2, 0.2), white, white);
+    Light light2(Vector(0, 10, 0), Color(1, 1, 1), white, white);
 
-    addLight(light1);
+    //addLight(light1);
     addLight(light2);
 
     QImage image = QImage(W, H, QImage::Format_RGB32);

@@ -1,14 +1,16 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include "color.h"
+#include "material.h"
 #include "ray.h"
 
 class Primitive {
+    protected:
+        Material material;
     public:
         Primitive();
 
-        virtual Color getColor() { return Color(0, 0, 0, 0); }
+        Material getMaterial() { return material; }
         virtual double findIntersection(Ray ray) = 0;
         virtual Vector getNormalAt(Vector p) = 0;
 

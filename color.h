@@ -6,15 +6,14 @@
 using namespace std;
 
 class Color {
-    double red, green, blue, special; // Special é a reflectividade e o polimento
+    double red, green, blue;
 public:
     Color();
-    Color(double, double, double, double);
+    Color(double, double, double);
 
     double r() { return red; }
     double g() { return green; }
     double b() { return blue; }
-    double s() { return special; }
     void r(double value){ red = value; }
     void g(double value){ green = value; }
     void b(double value){ blue = value; }
@@ -26,7 +25,6 @@ public:
     Color average(Color color);
     Color clip();
 };
-
 
 //Usar para debugar
 std::ostream& operator<<(std::ostream& out, Color &color);

@@ -4,6 +4,7 @@
 #include<vector>
 #include "object.h"
 #include "primitive.h"
+#include "material.h"
 
 class ObjReader {
     double bottomY;
@@ -11,7 +12,7 @@ class ObjReader {
 
     public:
         ObjReader();
-        int read(const char* filename, Color color);
+        int read(const char* filename, Material material);
         double getBottomY();
         vector<Primitive *> getFaces();
 };

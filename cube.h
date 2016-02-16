@@ -8,7 +8,7 @@
 class Cube : public Object {
 
 public:
-    Cube(Vector, Vector, Color);
+    Cube(Vector, Vector, Material);
 };
 
 #endif // CUBE_H

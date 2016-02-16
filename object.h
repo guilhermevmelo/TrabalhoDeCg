@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include <vector>
-#include "color.h"
+#include "material.h"
 #include "ray.h"
 #include "primitive.h"
 
@@ -12,7 +12,7 @@ using namespace std;
 class Object {
 
     protected:
-        Color color;
+        Material material;
         vector<Primitive*> faces;
         double bottomY;
 
@@ -21,7 +21,7 @@ class Object {
 
         vector<Primitive *> getFaces();
         double getBottomY();
-        Color getColor();
+        Material getMaterial();
 
         void translate(double tx, double ty, double tz);
         void scale(double sx, double sy, double sz);

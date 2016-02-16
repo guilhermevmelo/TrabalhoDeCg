@@ -3,10 +3,12 @@
 Plane::Plane() {
     normal = Vector(1, 0, 0);
     distance = 0;
-    color = Color(0.5, 0.5, 0.5, 0);
+    material = Material();
 }
 
-Plane::Plane(Vector n, double d, Color c):normal(n), distance(d), color(c){}
+Plane::Plane(Vector n, double d, Material material):normal(n), distance(d){
+    this->material = material;
+}
 
 
 double Plane::findIntersection(Ray ray) {

@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     congresso.cpp \
     objreader.cpp \
     primitive.cpp \
-    torus.cpp
+    torus.cpp \
+    material.cpp
 
 HEADERS  += mainwindow.h \
     vector.h \
@@ -43,6 +44,7 @@ HEADERS  += mainwindow.h \
     congresso.h \
     objreader.h \
     primitive.h \
-    torus.h
+    torus.h \
+    material.h
 
 FORMS    += mainwindow.ui

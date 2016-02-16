@@ -6,13 +6,17 @@
 
 class Light {
     Vector position;
-    Color color;
+    Color color_a;
+    Color color_d;
+    Color color_s;
 public:
     Light();
-    Light(Vector, Color);
+    Light(Vector, Color, Color, Color);
 
     Vector pos() { return position; }
-    Color col() { return color; }
+    Color col_a() { return color_a; }
+    Color col_d() { return color_d; }
+    Color col_s() { return color_s; }
 };
 
 #endif // LIGHT_H

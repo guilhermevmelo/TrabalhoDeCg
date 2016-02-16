@@ -6,22 +6,22 @@ Color::Color(){
     blue = 0.5;
 }
 
-Color::Color(double R, double G, double B, double S):red(R), green(G), blue(B), special(S){}
+Color::Color(double R, double G, double B):red(R), green(G), blue(B){}
 
 Color Color::scale(double scalar) {
-    return Color(red*scalar, green*scalar, blue*scalar, special);
+    return Color(red*scalar, green*scalar, blue*scalar);
 }
 
 Color Color::add(Color c) {
-    return Color(red + c.r(), green + c.g(), blue + c.b(), special);
+    return Color(red + c.r(), green + c.g(), blue + c.b());
 }
 
 Color Color::multiply(Color c) {
-    return Color(red * c.r(), green * c.g(), blue * c.b(), special);
+    return Color(red * c.r(), green * c.g(), blue * c.b());
 }
 
 Color Color::average(Color color) {
-    return Color ((red + color.r())/2, (green + color.g())/2, (blue + color.b())/2, special);
+    return Color ((red + color.r())/2, (green + color.g())/2, (blue + color.b())/2);
 }
 
 Color Color::clip() {
@@ -39,14 +39,13 @@ Color Color::clip() {
         if (green < 0) {green = 0;}
         if (blue < 0) {blue = 0;}
 
-        return Color (red, green, blue, special);
+        return Color (red, green, blue);
     }
 
 ostream & operator<<(ostream & out, Color &color) {
     out <<"[" << color.r();
     out << ", " << color.g();
     out << ", " << color.b();
-    out << "; " << color.s();
     out << "]";
     return out;
 }

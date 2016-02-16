@@ -2,6 +2,7 @@
 #include "objreader.h"
 #include "vector.h"
 #include "triangle.h"
+#include "material.h"
 #include <limits>
 
 using namespace std;
@@ -10,7 +11,7 @@ ObjReader::ObjReader() {
     bottomY = numeric_limits<double>::max();
 }
 
-int ObjReader::read(const char* filename, Color color) {
+int ObjReader::read(const char* filename, Material material) {
         vector<string*> coord;
         vector<Vector> vertex;
 
@@ -38,7 +39,7 @@ int ObjReader::read(const char* filename, Color color) {
                 int a,b,c;
 
                 sscanf(coord[i]->c_str(),"f %d %d %d",&a,&b,&c);
-                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), color));
+                faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), material));
             }
         }
         return 1;

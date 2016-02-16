@@ -9,15 +9,15 @@
 class Sphere : public Primitive {
     Vector center;
     double radius;
-    Color color;
+    Material color;
 
 public:
     Sphere();
-    Sphere(Vector, double, Color);
+    Sphere(Vector, double, Material);
 
     Vector getCenter() { return center; }
     double rad() { return radius; }
-    virtual Color getColor() { return color; }
+    virtual Material getColor() { return color; }
 
     virtual Vector getNormalAt(Vector p);
     virtual double findIntersection(Ray ray);

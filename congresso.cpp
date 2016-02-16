@@ -4,8 +4,8 @@
 Congresso::Congresso() {
     ObjReader reader;
 
-    color = Color(0.5, 0.5, 0.5, 0.3);
-    reader.read("/Users/guilherme/Developer/Trabalho/congresso2.obj", color);
+    material = Material();
+    reader.read("/Users/guilherme/Developer/Trabalho/congresso2.obj", material);
 
     faces = reader.getFaces();
     bottomY = reader.getBottomY();

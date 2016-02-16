@@ -9,15 +9,13 @@
 class Plane : public Primitive {
     Vector normal;
     double distance;
-    Color color;
 
 public:
     Plane();
-    Plane(Vector, double, Color);
+    Plane(Vector, double, Material);
 
     Vector getNormal() { return normal; }
     double getDistance() { return distance; }
-    virtual Color getColor() { return color; }
 
     virtual Vector getNormalAt(Vector p) { return normal; }
     virtual double findIntersection(Ray ray);

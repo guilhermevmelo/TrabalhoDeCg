@@ -1,7 +1,7 @@
 #include "object.h"
 
 Object::Object() {
-    color = Color(0, 0, 0, 0);
+    material = Material();
 }
 
 vector<Primitive *> Object::getFaces() {
@@ -12,7 +12,7 @@ double Object::getBottomY() {
     return bottomY;
 }
 
-Color Object::getColor() { return color; }
+Material Object::getMaterial() { return material; }
 
 
 void Object::translate(double tx, double ty, double tz) {

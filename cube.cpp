@@ -1,7 +1,7 @@
 #include "cube.h"
 #include "triangle.h"
 
-Cube::Cube(Vector corner1, Vector corner2, Color color) {
+Cube::Cube(Vector corner1, Vector corner2, Material color) {
     double c1x = corner1.x();
     double c1y = corner1.y();
     double c1z = corner1.z();
