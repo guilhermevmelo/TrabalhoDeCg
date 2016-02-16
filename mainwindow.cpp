@@ -34,8 +34,8 @@ const bool render_shadows = true;
 double ambientLight = 0.2;
 double accuracy = 0.0000000001;
 
-int W = 200;
-int H = 200;
+int W = 120;
+int H = 120;
 
 Color white(1.0, 1.0, 1.0);
 Color black(0, 0, 0);
@@ -43,9 +43,10 @@ Color black(0, 0, 0);
 Material green(Color(0.2, 0.2, 0.2), Color(0.5, 1.0, 0.5), Color(0.5, 1.0, 0.5), 2);
 Material brown(Color(0.2, 0.2, 0.2), Color(0.4, 0.2, 0.25), Color(0.1, 0.1, 0.1), 0);
 Material metal(Color(0.2, 0.2, 0.2), Color(0.1, 0.1, 0.1), Color(1, 1, 1), 5);
-Material red(Color(0.2, 0.2, 0.2), Color(1,0,0), Color(1, 0, 0), 2);
+Material red(Color(0.2, 0.2, 0.2), Color(1,0.1,0.1), Color(1, 1, 1), 20);
 Material orange(Color(0.1, 0.1, 0.1), Color(0.0752, 0.6, 0.0248), Color(0.7, 0.5585, 0.2308), 2);
 Material blue(Color(0.2, 0.2, 0.2), Color(0.3, 0.4, 0.8), Color(0.3, 0.4, 0.8), 2);
+Material brass(Color(0.33, 0.22, 0.03), Color(0.78, 0.57, 0.11), Color(0.99, 0.91, 0.81), 27.8);
 
 Vector X(1, 0, 0);
 Vector Y(0, 1, 0);
@@ -163,12 +164,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    //Cenário final
+/* Cenário  */
 
-    Congresso congresso;
-    addObject(congresso);
-
-    Plane ground(Vector(0,1,0), congresso.getBottomY(), brown);
+    Plane ground(Vector(0,1,0), -3, brown);
     objects.push_back(dynamic_cast<Primitive *>(&ground));
 
 //    Plane sky(Vector(0, 0, 1), -100, blue);
@@ -185,28 +183,36 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Sphere little_ball(Vector(0, 0, 0), 1, orange);
     //objects.push_back(dynamic_cast<Primitive *>(&little_ball));
 
-//    Torus
 
-//    Torus torus;
-//    addObject(torus);
+
+/* Congresso */
+//    Congresso congresso;
+//    addObject(congresso);
+
+
+
+/*   Torus   */
+    Torus torus(metal);
+    addObject(torus);
 
     double aspectRatio = (double)W / (double)H;
 
 //    Vector camera_position(0, 0, 5);
-//    Vector camera_position(1, 0.5, 1); //Camera do Congresso
+//    Vector camera_position(1, 0.4, 1); //Camera do Congresso
+//    Vector camera_position(1, 0.4, 0.4); //Camera do Congresso de frente
 //    Vector camera_position(1, 0.5, -1);
-    Vector camera_position(0, 3, 3);
+//    Vector camera_position(0, 3, 3);
 
-//    Vector camera_position(-6, 4, 3); //Camera do Torus
+    Vector camera_position(-6, 4, 3); //Camera do Torus
     Vector look_at(0, 0, 0);
     Vector up(0, 1, 0);
 
     Camera camera(camera_position, look_at, up);
 
-    Light light1(Vector(0, 0, 10), Color(0.2, 0.2, 0.2), white, white);
-    Light light2(Vector(0, 10, 0), Color(1, 1, 1), white, white);
+    Light light1(Vector(0, 0, 10), Color(1, 1, 1), white, white);
+    Light light2(Vector(0, 10, 10), Color(1, 1, 1), white, white);
 
-    //addLight(light1);
+    addLight(light1);
     addLight(light2);
 
     QImage image = QImage(W, H, QImage::Format_RGB32);

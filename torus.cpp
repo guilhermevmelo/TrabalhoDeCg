@@ -11,3 +11,11 @@ Torus::Torus() {
     bottomY = reader.getBottomY();
 }
 
+Torus::Torus(Material m) {
+    ObjReader reader;
+
+    reader.read("/Users/guilherme/Developer/Trabalho/chico.obj", m);
+
+    faces = reader.getFaces();
+    bottomY = reader.getBottomY();
+}

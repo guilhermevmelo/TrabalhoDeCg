@@ -6,6 +6,7 @@
 class Torus : public Object {
     public:
         Torus();
+        Torus(Material);
 };
 
 #endif // TORUS_H
