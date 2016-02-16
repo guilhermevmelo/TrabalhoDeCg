@@ -74,10 +74,13 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
 }
 
 Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long index_of_closest_object) {
+    //Modelo de iluminação de Phong
+
     Primitive *closest_object = objects.at(index_of_closest_object);
     Vector n = closest_object->getNormalAt(intersectionPoint);
     Color object_color = closest_object->getColor();
 
+    // Componente ambiente
     Color color = object_color.scale(ambientLight);
 
     for (unsigned int light_i = 0; light_i < light_sources.size(); light_i++) {
@@ -113,10 +116,10 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long ind
             }
 
             if (shadowed == false) {
+                // Componente Difusa
                 color = color.add(object_color.multiply(light_color.scale(cossine)));
 
-
-                //Modelo de iluminação de Phong
+                //Componente especular
                 Vector v = camera_ray_direction.negative();
                 double _2ln = 2*l.dotProduct(n);
                 Vector _2lnn = n.multiply(_2ln);
