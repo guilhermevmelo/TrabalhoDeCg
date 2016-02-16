@@ -29,7 +29,7 @@ using namespace std;
 vector<Primitive *> objects;
 vector<Light *> light_sources;
 
-const bool render_shadows = false;
+const bool render_shadows = true;
 double ambientLight = 0.2;
 double accuracy = 0.0000000001;
 
@@ -45,6 +45,10 @@ Color red(1, 0.5, 0.5, 0.3);
 Color orange(0.94, 0.75, 0.31, 0.3);
 Color blue(0.3, 0.4, 0.8, 0.4);
 
+Vector X(1, 0, 0);
+Vector Y(0, 1, 0);
+Vector Z(0, 0, 1);
+Vector O(0, 0, 0);
 
 long  getIndexOfClosestObject(vector<double>  intersections) {
     // para se nao toca em nada
@@ -72,11 +76,12 @@ long  getIndexOfClosestObject(vector<double>  intersections) {
 Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long index_of_closest_object) {
     Primitive *closest_object = objects.at(index_of_closest_object);
     Vector n = closest_object->getNormalAt(intersectionPoint);
-    Color closest_object_color = closest_object->getColor();
+    Color object_color = closest_object->getColor();
 
-    Color color = closest_object_color.scale(ambientLight);
+    Color color = object_color.scale(ambientLight);
 
     for (unsigned int light_i = 0; light_i < light_sources.size(); light_i++) {
+        Color light_color = light_sources.at(light_i)->col();
         Vector l = light_sources.at(light_i)->pos().add(intersectionPoint.negative()).normalize();
         float cossine = n.dotProduct(l);
 
@@ -108,28 +113,20 @@ Color getColorAt(Vector intersectionPoint, Vector camera_ray_direction, long ind
             }
 
             if (shadowed == false) {
-                Color object_color = closest_object->getColor();
-                Color light_color = light_sources.at(light_i)->col();
                 color = color.add(object_color.multiply(light_color.scale(cossine)));
 
-                if (closest_object_color.s() > 0 && closest_object_color.s() <= 1.0) {
-                    // Shinenness: special = ]0 - 1]
-                    //cout << "SPECIAL ]0 - 1]" << endl;
 
-                    double dot1 = n.dotProduct(camera_ray_direction.negative());
-                    Vector scalar1 = n.multiply(dot1);
-                    Vector add1 = scalar1.add(camera_ray_direction);
-                    Vector scalar2 = add1.multiply(2);
-                    Vector add2 = camera_ray_direction.negative().add(scalar2);
-                    Vector r = add2.normalize();
+                //Modelo de iluminação de Phong
+                Vector v = camera_ray_direction.negative();
+                double _2ln = 2*l.dotProduct(n);
+                Vector _2lnn = n.multiply(_2ln);
+                Vector r = _2lnn.add(l.negative()).normalize();
 
-                    double specular = r.dotProduct(l);
+                double specular = r.dotProduct(v);
 
-                    if (specular > 0) {
-                        specular = pow(specular, closest_object_color.s() * 10);
-                        Color light_color = light_sources.at(light_i)->col();
-                        color = color.add(light_color.scale(specular * closest_object_color.s()));
-                    }
+                if (specular > 0) {
+                    specular = pow(specular, object_color.s() * 10);
+                    color = color.add(light_color.scale(specular * object_color.s()));
                 }
             }
         }
@@ -169,11 +166,16 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Plane sky(Vector(0, 0, 1), -100, blue);
 //    objects.push_back(dynamic_cast<Primitive *>(&sky));
 
-    Cube cube(Vector(-5, -2, -5), Vector(-4, 0,-4), orange);
+    Triangle t(X, Y, Z, blue);
+    objects.push_back(dynamic_cast<Primitive *>(&t));
+
+
+    Cube cube(Vector(-3, -2, -3), Vector(-2, -1,-2), orange);
+    //cube.translate();
     addObject(cube);
 
-    Sphere little_ball(Vector(0, 0, 0), 2, green);
-    objects.push_back(dynamic_cast<Primitive *>(&little_ball));
+    Sphere little_ball(Vector(0, 0, 0), 1, orange);
+    //objects.push_back(dynamic_cast<Primitive *>(&little_ball));
 
 //    Torus
 
@@ -185,7 +187,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Vector camera_position(0, 0, 5);
 //    Vector camera_position(1, 0.5, 1); //Camera do Congresso
 //    Vector camera_position(1, 0.5, -1);
-    Vector camera_position(0, 6, 10);
+    Vector camera_position(5, 5, 5);
 
 //    Vector camera_position(-6, 4, 3); //Camera do Torus
     Vector look_at(0, 0, 0);

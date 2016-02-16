@@ -37,7 +37,7 @@ int ObjReader::read(const char* filename, Color color) {
             } else if(coord[i]->c_str()[0]=='f')   {
                 int a,b,c;
 
-                sscanf(coord[i]->c_str(),"f %d %d %d",&c,&b,&a);
+                sscanf(coord[i]->c_str(),"f %d %d %d",&a,&b,&c);
                 faces.push_back(new Triangle(vertex.at(a-1),vertex.at(b-1),vertex.at(c-1), color));
             }
         }
